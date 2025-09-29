@@ -1,116 +1,277 @@
 :root{
-  --bg:#ffffff;         /* 白底，和参考图一致 */
-  --ink:#000000;        /* 黑色主色 */
-  --muted:#6b7280;      /* 说明/注释 */
-  --stroke:#111111;     /* 描边 */
+  /* 基础色彩 */
+  --bg:#ffffff;
+  --ink:#0a0a0a;
+  --ink-secondary:#374151;
+  --muted:#6b7280;
+  --muted-light:#9ca3af;
+  --muted-lightest:#d1d5db;
+  --stroke-primary:#111111;
+  --stroke-secondary:#4b5563;
+
+  /* 场景配色（可切换） */
+  --accent-global:#2563eb; /* 更深的蓝色，提高对比度 */
+  --accent-global-light:#3b82f6;
+  --accent-local:#16a34a;  /* 更深的绿色，提高对比度 */
+  --accent-local-light:#22c55e;
+
+  /* 连线层次 - 建立清晰的视觉权重 */
+  --edge-primary:#111111;      /* 主流程 - 最重要 */
+  --edge-secondary:#4b5563;    /* 辅助流程 - 次要 */
+  --edge-tertiary:#9ca3af;     /* 反馈循环 - 最轻 */
+  --edge-highlight:#f59e0b;    /* 高亮状态 - 橙色更显眼 */
+
+  /* 节点填充色 */
+  --node-core:#111111;
+  --node-black:#000000;
+  --node-solid:#ffffff;
+  --node-hollow:transparent;
+
+  /* 阴影和深度 */
+  --shadow-light:0 2px 8px rgba(0,0,0,0.08);
+  --shadow-medium:0 4px 16px rgba(0,0,0,0.12);
+  --shadow-heavy:0 8px 24px rgba(0,0,0,0.15);
 }
 
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
 }
-header{padding:16px 24px 8px 24px}
-h1{font-size:20px;margin:0 0 6px 0;font-weight:700;letter-spacing:.2px}
-.sub{margin:0;color:var(--muted);font-size:13px}
 
-main{height:calc(100vh - 64px);padding:0 16px 16px 16px}
-#canvas{width:100%;height:100%;background:var(--bg)}
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:14px 18px 8px 18px; border-bottom:1px solid #e5e7eb;
+}
+.topbar h1{margin:0; font-size:18px; font-weight:700; letter-spacing:.2px}
+.controls{display:flex; align-items:center; gap:8px}
+.pill{
+  border: 2px solid var(--stroke-primary); 
+  background: var(--bg); 
+  color: var(--ink); 
+  padding: 8px 16px; 
+  border-radius: 999px; 
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-light);
+}
 
-/* --- 视觉样式 --- */
-.link{
-  stroke: var(--stroke);
-  stroke-width: 1.2px;
+.pill:hover {
+  border-color: var(--accent-global);
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-1px);
+}
+
+.pill.active{
+  background: var(--stroke-primary); 
+  color: var(--bg);
+  box-shadow: var(--shadow-medium);
+}
+
+.pill:focus {
+  outline: 2px solid var(--accent-global);
+  outline-offset: 2px;
+}
+
+.stage{position:relative; height:calc(100vh - 100px); padding:10px 10px 0 10px}
+#canvas{width:100%; height:100%; background:var(--bg)}
+
+.footnote{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 18px 14px 18px; border-top:1px solid #e5e7eb; font-size:12px;
+}
+.legend{display:flex; align-items:center; gap:16px; font-weight: 500;}
+
+.chip{
+  display: inline-block; 
+  width: 28px; 
+  height: 4px; 
+  border-radius: 999px; 
+  background: var(--edge-primary);
+  box-shadow: var(--shadow-light);
+}
+
+.chip-aux{
+  background: var(--edge-secondary);
+}
+
+.chip-dash{
+  background: linear-gradient(90deg, var(--edge-tertiary) 60%, transparent 0) repeat-x;
+  background-size: 8px 2px; 
+  height: 3px; 
+  width: 28px; 
+  border-radius: 0;
+}
+
+/* --- 连线样式 - 清晰的视觉层次 --- */
+.link{ 
+  stroke: var(--edge-primary); 
+  stroke-width: 2.5px; 
   fill: none;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+}
+
+.link.aux{ 
+  stroke: var(--edge-secondary); 
+  stroke-width: 1.8px;
+  opacity: 0.7;
+}
+
+.link.dashed{ 
+  stroke: var(--edge-tertiary);
+  stroke-width: 2px;
+  stroke-dasharray: 8 4;
+  opacity: 0.6;
+}
+
+/* 高亮状态 */
+.link.highlighted {
+  stroke: var(--edge-highlight);
+  stroke-width: 3px;
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4));
+}
+
+.node {
+  transition: all 0.3s ease;
 }
 
 .node circle{
-  fill: #fff;
-  stroke: var(--stroke);
-  stroke-width: 1.2px;
+  fill: var(--node-solid); 
+  stroke: var(--stroke-primary); 
+  stroke-width: 2px;
+  filter: drop-shadow(var(--shadow-light));
+  transition: all 0.3s ease;
 }
 
-.node.core circle{
-  fill: var(--ink);
-  stroke: var(--ink);
+.node.core circle{ 
+  fill: var(--node-core); 
+  stroke: var(--node-core);
+  stroke-width: 3px;
+  filter: drop-shadow(var(--shadow-medium));
 }
 
 .node.black circle{ 
-  fill: var(--ink); 
-  stroke: var(--ink); 
+  fill: var(--node-black); 
+  stroke: var(--node-black);
+  stroke-width: 2.5px;
+  filter: drop-shadow(var(--shadow-medium));
 }
 
 .node.hollow circle{ 
-  fill: none; 
-  stroke: var(--stroke); 
-  stroke-width: 2px;
+  fill: var(--node-hollow); 
+  stroke: var(--stroke-primary);
+  stroke-width: 2.5px;
+  filter: drop-shadow(var(--shadow-light));
 }
 
-.node.solid circle{ 
-  fill: #fff; 
-  stroke: var(--stroke); 
-  stroke-width: 1.5px;
+/* 节点悬停效果 */
+.node:hover circle {
+  stroke-width: 3px;
+  filter: drop-shadow(var(--shadow-heavy));
+  transform: scale(1.05);
 }
 
-/* Legacy classes for compatibility */
-.node.fill-black circle{ fill: var(--ink); stroke: var(--ink); }
-.node.stroke-only circle{ fill: none; stroke: var(--stroke); }
+.node.core:hover circle,
+.node.black:hover circle {
+  stroke-width: 4px;
+}
 
+/* 文字层次 - 提高可读性和对比度 */
 .label{
-  font-size: 14px;
-  fill: var(--ink);
-  text-anchor: middle;
-  dominant-baseline: middle;
-  font-weight: 600;
-  pointer-events: none; /* 防止文字阻挡鼠标事件 */
+  font-size: 15px; 
+  fill: var(--ink); 
+  text-anchor: middle; 
+  dominant-baseline: middle; 
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+  transition: all 0.3s ease;
 }
 
 .label.inverse{ 
-  fill: #fff; /* 黑底白字 */
+  fill: #ffffff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  font-weight: 900;
 }
 
 .subtext{
-  font-size: 10px;
-  fill: var(--muted);
-  text-anchor: middle;
+  font-size: 11px; 
+  fill: var(--ink-secondary); 
+  text-anchor: middle; 
   dominant-baseline: hanging;
-  pointer-events: none; /* 防止文字阻挡鼠标事件 */
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  opacity: 0.85;
+  transition: all 0.3s ease;
+}
+
+/* 悬停时文字增强 */
+.node:hover .label {
+  font-size: 16px;
+}
+
+.node:hover .subtext {
+  font-size: 12px;
+  opacity: 1;
 }
 
 .orbit{
-  fill: none;
-  stroke: var(--stroke);
-  stroke-width: 1.2px;
-  stroke-dasharray: 6 6; /* 虚线环 */
-  opacity: .9;
+  fill: none; 
+  stroke: var(--muted-light); 
+  stroke-width: 1px; 
+  stroke-dasharray: 4 8; 
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
 }
 
-/* 小圆点 bullet（可用于列表视觉） */
-.bullet{
-  fill: var(--ink);
+/* 降低轨道圈的视觉权重，让节点和连线更突出 */
+.orbit:hover {
+  opacity: 0.5;
 }
 
-/* 小注释点到文本的连线 */
-.callout{
-  stroke: var(--stroke);
-  stroke-width: 1;
-  fill: none;
-  stroke-dasharray: 4 4;
+/* tooltip - 增强视觉效果 */
+.tooltip{
+  position: absolute; 
+  padding: 8px 12px; 
+  background: var(--ink); 
+  color: var(--bg); 
+  border-radius: 8px;
+  font-size: 13px; 
+  font-weight: 500;
+  pointer-events: none; 
+  transform: translate(-50%, -120%); 
+  white-space: nowrap;
+  box-shadow: var(--shadow-heavy);
+  border: 1px solid var(--stroke-secondary);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
 }
 
-/* 交互效果 */
-.node {
-  transition: all 0.2s ease;
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--ink);
 }
 
-.node:hover circle {
-  stroke-width: 3px !important;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+/* 细节面板 */
+#details{
+  position:absolute; right:0; top:0; height:100%; width:420px;
+  background:#fff; color:#111; border-left:1px solid #111; box-shadow:-12px 0 24px rgba(0,0,0,.06);
+  padding:20px 20px 24px; overflow:auto;
 }
-
-.link {
-  transition: stroke-width 0.2s ease;
+#details[hidden]{display:none}
+#closeDetails{
+  position:absolute; right:12px; top:10px; width:32px; height:32px;
+  border:1px solid #111; background:#fff; cursor:pointer; font-size:18px; line-height:1;
 }
-
-.link:hover {
-  stroke-width: 2px;
-}
+#details h2{margin:28px 0 6px 0; font-size:20px}
+#details .muted{color:#666; margin:0 0 12px 0}
+#details .body{font-size:14px; line-height:1.6}
+#details .body h3{font-size:12px; margin:14px 0 6px; text-transform:uppercase; letter-spacing:.5px}
+#details .body ul{margin:6px 0 12px 18px}

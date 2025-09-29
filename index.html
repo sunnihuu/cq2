@@ -1,21 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Radial Concept Map</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://unpkg.com/d3@7/dist/d3.min.js" defer></script>
-    <script src="script.js" defer></script>
-    </head>
-    <body>
-    <header>
-        <h1>Concept Map · Radial Layout</h1>
-        <p class="sub">Edit <code>script.js</code> to change nodes/links/orbits.</p>
-    </header>
-    <main>
-        <svg id="canvas" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid meet" role="img"
-            aria-label="Radial concept diagram"></svg>
-    </main>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pizza Thesis · Framework Diagram</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/d3@7/dist/d3.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Framework Diagram · Pizza → Data → Model → Design → Public</h1>
+    <div class="controls" aria-label="Scenario toggle">
+      <span class="muted">Scenario:</span>
+      <button id="btnGlobal" class="pill active" aria-pressed="true">Global</button>
+      <button id="btnLocal" class="pill" aria-pressed="false">Local</button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <!-- 自适应 SVG 画布 -->
+    <svg id="canvas" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid meet"
+         role="img" aria-label="Radial framework diagram"></svg>
+
+    <!-- 细节面板 -->
+    <aside id="details" aria-live="polite" aria-label="Details panel" hidden>
+      <button id="closeDetails" aria-label="Close details">×</button>
+      <h2 id="dTitle">Title</h2>
+      <p id="dSubtitle" class="muted">Subtitle</p>
+      <div id="dBody" class="body"></div>
+    </aside>
+
+    <!-- 提示 tooltip -->
+    <div id="tooltip" class="tooltip" hidden></div>
+  </main>
+
+  <footer class="footnote">
+    <span class="legend">
+      <span class="chip chip-main"></span> Main flow
+      <span class="chip chip-aux"></span> Auxiliary / reference
+      <span class="chip chip-dash"></span> Feedback loop
+    </span>
+    <span class="muted">Click a node to highlight flows and open details. Double-click to reset.</span>
+  </footer>
 </body>
 </html>
