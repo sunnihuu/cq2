@@ -1,0 +1,116 @@
+:root{
+  --bg:#ffffff;         /* 白底，和参考图一致 */
+  --ink:#000000;        /* 黑色主色 */
+  --muted:#6b7280;      /* 说明/注释 */
+  --stroke:#111111;     /* 描边 */
+}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+}
+header{padding:16px 24px 8px 24px}
+h1{font-size:20px;margin:0 0 6px 0;font-weight:700;letter-spacing:.2px}
+.sub{margin:0;color:var(--muted);font-size:13px}
+
+main{height:calc(100vh - 64px);padding:0 16px 16px 16px}
+#canvas{width:100%;height:100%;background:var(--bg)}
+
+/* --- 视觉样式 --- */
+.link{
+  stroke: var(--stroke);
+  stroke-width: 1.2px;
+  fill: none;
+}
+
+.node circle{
+  fill: #fff;
+  stroke: var(--stroke);
+  stroke-width: 1.2px;
+}
+
+.node.core circle{
+  fill: var(--ink);
+  stroke: var(--ink);
+}
+
+.node.black circle{ 
+  fill: var(--ink); 
+  stroke: var(--ink); 
+}
+
+.node.hollow circle{ 
+  fill: none; 
+  stroke: var(--stroke); 
+  stroke-width: 2px;
+}
+
+.node.solid circle{ 
+  fill: #fff; 
+  stroke: var(--stroke); 
+  stroke-width: 1.5px;
+}
+
+/* Legacy classes for compatibility */
+.node.fill-black circle{ fill: var(--ink); stroke: var(--ink); }
+.node.stroke-only circle{ fill: none; stroke: var(--stroke); }
+
+.label{
+  font-size: 14px;
+  fill: var(--ink);
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-weight: 600;
+  pointer-events: none; /* 防止文字阻挡鼠标事件 */
+}
+
+.label.inverse{ 
+  fill: #fff; /* 黑底白字 */
+}
+
+.subtext{
+  font-size: 10px;
+  fill: var(--muted);
+  text-anchor: middle;
+  dominant-baseline: hanging;
+  pointer-events: none; /* 防止文字阻挡鼠标事件 */
+}
+
+.orbit{
+  fill: none;
+  stroke: var(--stroke);
+  stroke-width: 1.2px;
+  stroke-dasharray: 6 6; /* 虚线环 */
+  opacity: .9;
+}
+
+/* 小圆点 bullet（可用于列表视觉） */
+.bullet{
+  fill: var(--ink);
+}
+
+/* 小注释点到文本的连线 */
+.callout{
+  stroke: var(--stroke);
+  stroke-width: 1;
+  fill: none;
+  stroke-dasharray: 4 4;
+}
+
+/* 交互效果 */
+.node {
+  transition: all 0.2s ease;
+}
+
+.node:hover circle {
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.link {
+  transition: stroke-width 0.2s ease;
+}
+
+.link:hover {
+  stroke-width: 2px;
+}
